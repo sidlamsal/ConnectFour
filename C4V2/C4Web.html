@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connect-Four</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(7, 91px);
+            grid-template-rows: repeat(7, 91px);
+            gap: 4px;
+            background-color: blue;
+        }
+
+        .cell {
+            width: 80px;
+            height: 80px;
+            border-radius: 75%;
+            background-color: white;
+            border: 2px solid #444;
+        }
+
+        .red {
+            background-color: red;
+        }
+
+        .yellow {
+            background-color: yellow;
+        }
+
+        .game {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+    </style>
+
+    <script>
+        const boardState = [
+            [0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0]
+        ];
+
+        document.addEventListener("DOMContentLoaded", function () {
+            // Initial update of the board
+            updateBoard(boardState);
+            setButtons()
+            // Run updatePeriodically every 5 seconds
+            setInterval(updateBoard(boardState), 5000);
+        })
+
+        // Function to update the board based on game state
+        function updateBoard(gameState) {
+            const board = document.getElementById('board');
+            board.innerHTML = ''; // Clear existing cells
+
+            gameState.forEach((row, rowIndex) => {
+                row.forEach((cellValue, colIndex) => {
+                    const cell = document.createElement('div');
+                    cell.classList.add('cell');
+                    cell.id = `${rowIndex}${colIndex}`;
+                
+                    if (cellValue === 1) {
+                        cell.classList.add('red');
+                    } else if (cellValue === 2) {
+                        cell.classList.add('yellow');
+                    }
+
+                    board.appendChild(cell);
+                });
+            });
+        }
+
+        function setButtons() {
+            const buttons = document.getElementById("buttons");
+            for (let i=0; i<7; i++){
+                const button = document.createElement('button');
+                button.innerHTML= i+1;
+                buttons.appendChild(button)
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <div class="game">
+        <div class="buttons" id="buttons"></div>
+        <div class="board" id="board"></div>
+    </div>
+</body>
+
+</html>
