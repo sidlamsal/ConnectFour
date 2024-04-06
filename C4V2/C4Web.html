@@ -64,13 +64,28 @@
 
         document.addEventListener("DOMContentLoaded", function () {
             // Initial update of the board
-            updateBoard(boardState);
+            makeBoard(boardState);
             // Run updatePeriodically every 5 seconds
             setInterval(updateBoard(boardState), 5000);
         })
 
         // Function to update the board based on game state
         function updateBoard(gameState) {
+            for (let i=0; i<7;i++){
+                for (let j=0; j<7; j++){
+                    const cellID = `${i}${j}`;
+                    const cell = document.getElementById(cellID)
+
+                    if (gameState[i][j] === 1 && !cell.classList.contains('red')) {
+                        cell.classList.add('red');
+                    } else if (gameState[i][j] === 2 && !cell.classList.contains('yellow')) {
+                        cell.classList.add('yellow');
+                    }
+                }
+            }
+        }
+
+        function makeBoard(gameState) {
             const board = document.getElementById('board');
             board.innerHTML = ''; // Clear existing cells
 
@@ -79,12 +94,6 @@
                     const cell = document.createElement('div');
                     cell.classList.add('cell');
                     cell.id = `${i}${j}`;
-                    if (gameState[i][j] === 1) {
-                        cell.classList.add('red');
-                    } else if (gameState[i][j] === 2) {
-                        cell.classList.add('yellow');
-                    }
-
                     board.appendChild(cell);
                 }
             }
@@ -93,9 +102,11 @@
                 const button = document.createElement('button');
                 button.innerHTML= i+1;
                 button.classList.add("columnButton")
+                button.setAttribute('disabled', 'true');
                 board.appendChild(button)
             }
         }
+
     </script>
 </head>
 
