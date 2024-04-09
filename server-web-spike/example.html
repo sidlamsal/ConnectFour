@@ -1,0 +1,22 @@
+<html>
+
+<head>
+    <title>Simple Server</title>
+    <script>
+        function submit() {
+            const elem = document.getElementById("input");
+            const elemText = elem.textContent;
+            const req = new XMLHttpRequest();
+            req.open("GET", "http://localhost:8000?input=" + encodeURIComponent(input));
+            req.send();
+
+        }
+    </script>
+</head>
+
+<body>
+    <input id="input" type="text">
+    <button onclick="submit()">Submit</button>
+</body>
+
+</html>

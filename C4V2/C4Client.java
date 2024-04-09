@@ -7,7 +7,7 @@ public class C4Client {
 
     public static void main(String[] args) {
         try {
-            Socket socket = new Socket("172.18.66.210", 12345); // Connect to IP on port 12345 (server port#)
+            Socket socket = new Socket("172.18.58.120", 12345); // Connect to IP on port 12345 (server port#)
             System.out.println("Matchmaking...");
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
