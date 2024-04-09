@@ -121,6 +121,8 @@ public class C4Server {
         makeMove(writer, reader, playerNumber);
       }
       else{
+        // * need to check for non numerical input: 
+        // * add an else if to and if !int: makeMove(writer, reader, playerNumber);
         int column = Integer.parseInt(changeRequest);
         if (validMove(column)) {
           updateBoard(column, playerNumber);
