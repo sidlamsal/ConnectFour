@@ -1,22 +1,52 @@
-<html>
-
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <title>Simple Server</title>
-    <script>
-        function submit() {
-            const elem = document.getElementById("input");
-            const elemText = elem.textContent;
-            const req = new XMLHttpRequest();
-            req.open("GET", "http://localhost:8000?input=" + encodeURIComponent(input));
-            req.send();
-
-        }
-    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Socket Client</title>
 </head>
-
 <body>
-    <input id="input" type="text">
-    <button onclick="submit()">Submit</button>
-</body>
+    <h1>Simple Socket Client</h1>
+    <input type="text" id="messageInput">
+    <button onclick="sendMessage()">Send</button>
+    <div id="response"></div>
+    
+    <script>
+        const SERVER_ADDRESS = 'ws://127.0.0.1:3000';
+        let socket = null;
 
+        function connect() {
+            socket = new WebSocket(SERVER_ADDRESS);
+
+            socket.onopen = function(event) {
+                console.log('Connected to server');
+            };
+
+            socket.onmessage = function(event) {
+                const responseDiv = document.getElementById('response');
+                responseDiv.innerHTML = 'Server response: ' + event.data;
+            };
+
+            socket.onerror = function(event) {
+                console.error('WebSocket error:', event);
+            };
+
+            socket.onclose = function(event) {
+                console.log('Connection closed');
+            };
+        }
+
+        function sendMessage() {
+            const messageInput = document.getElementById('messageInput');
+            const message = messageInput.value;
+            if (!socket || socket.readyState !== WebSocket.OPEN) {
+                connect();
+            }
+            socket.send(message);
+            messageInput.value = '';
+        }
+
+        connect(); // Connect to the server on page load
+    </script>
+</body>
 </html>

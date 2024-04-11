@@ -7,7 +7,7 @@ public class C4Server {
   public static void main(String[] args) {
     boolean waitingForTwoPlayersPerGame = true;
     try {
-      InetAddress ipadd = InetAddress.getByName("172.18.66.210");
+      InetAddress ipadd = InetAddress.getByName("localhost");
       System.out.println(ipadd);
       ServerSocket serverSocket = new ServerSocket(12345, 128, ipadd); // Server socket listening on port 12345
       System.out.println("Server started. Waiting for players to connect");
