@@ -123,13 +123,16 @@ public class C4Server {
         makeMove(writer, reader, playerNumber);
       }
       else{
-        // * need to check for non numerical input: 
-        // * add an else if to and if !int: makeMove(writer, reader, playerNumber);
-        int column = Integer.parseInt(changeRequest);
-        if (validMove(column)) {
-          updateBoard(column, playerNumber);
-        } else {
-          writer.println("Try again!");
+        try {
+          int column = Integer.parseInt(changeRequest);
+          if (validMove(column)) {
+            updateBoard(column, playerNumber);
+          } else {
+            writer.println("Error: not a valid move: Try again!");
+            makeMove(writer, reader, playerNumber);
+          }
+        } catch (Exception e) {
+          writer.println("Error: move must be an integer between 0-6");
           makeMove(writer, reader, playerNumber);
         }
       }
