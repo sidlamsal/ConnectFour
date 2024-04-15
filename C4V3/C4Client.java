@@ -33,6 +33,8 @@ public class C4Client {
                 }
             }
 
+            reader.close();
+            writer.close();
             socket.close();
         } catch (Exception e) {
             e.printStackTrace();
