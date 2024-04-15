@@ -74,7 +74,7 @@ public class C4Server {
           + ".");
 
       while (waitingForPlayers) {
-        // could we multi-thread this?
+        // could we multi-thread this? yes
         System.out.println("Waiting for players to connect");
         Socket player = gameServer.serverSocket.accept();
         System.out.println("A player has joined.");
