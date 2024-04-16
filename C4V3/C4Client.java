@@ -15,8 +15,20 @@ public class C4Client {
             BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             PrintWriter writer = new PrintWriter(socket.getOutputStream(), true);
 
-            // continously print output from server
+            boolean gameStarted = false;
             String line;
+            
+            while(!gameStarted){
+                line = reader.readLine();
+                if (line.contains("marco")){
+                    writer.println("polo");
+                }
+                else if (line.contains("Connect Four!")){
+                    break;
+                }
+            }
+
+            // continously print output from server
             while ((line = reader.readLine()) != null) {
                 System.out.println(line);
                 //if server asks for input

@@ -36,8 +36,21 @@ public class C4Server {
   }
   
   private static boolean isActive(Socket player) {
-    // cant find a good way to do this ***
-    return true;
+    try {
+      BufferedReader reader = new BufferedReader(new InputStreamReader(player.getInputStream()));
+      PrintWriter writer = new PrintWriter(player.getOutputStream(), true);
+
+      writer.println("marco");
+      if(reader.readLine().contains("polo")){
+        return true;
+      }
+      else{
+        return false;
+      }
+
+    } catch (Exception e) {
+      return false;
+    }
   }
 
   private void checkPlayers() {
