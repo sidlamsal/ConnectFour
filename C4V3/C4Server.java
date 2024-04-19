@@ -84,9 +84,9 @@ public class C4Server {
         // could we multi-thread this? yes
         System.out.println("Waiting for players to connect");
         Socket player = gameServer.serverSocket.accept();
-        System.out.println("A player has joined.");
+        System.out.println("A player has joined on socket " + player.getPort() + ".");
         gameServer.playerQueue.add(player);
-        System.out.println("matchmaking...");
+        System.out.println("Matchmaking...");
         gameServer.matchmake();
       }
 
