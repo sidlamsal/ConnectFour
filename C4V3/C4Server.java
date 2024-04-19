@@ -68,16 +68,6 @@ public class C4Server {
     playerQueue = activePlayers;
   }
 
-  private void checkGames() {
-    for (int i = 0; i < gamesList.size(); i++) {
-      Thread t = gamesList.get(i);
-      if (!t.isAlive()) {
-        gamesList.remove(i);
-        System.out.println(t.getName() + " has ended.");
-      }
-    }
-  }
-
   public static void main(String[] args) {
     boolean waitingForPlayers = true;
 
@@ -86,16 +76,18 @@ public class C4Server {
       System.out.println("Server started at IP: " + gameServer.ipAddress + " and port: " + gameServer.serverPort
           + ".");
 
+      Thread checkGamesThread = new Thread(new C4CheckGame(gameServer.gamesList));
+      checkGamesThread.start();
+      System.out.println("Started game checking.");
+
       while (waitingForPlayers) {
         // could we multi-thread this? yes
         System.out.println("Waiting for players to connect");
         Socket player = gameServer.serverSocket.accept();
         System.out.println("A player has joined.");
         gameServer.playerQueue.add(player);
-        System.out.println("matchmaking");
+        System.out.println("matchmaking...");
         gameServer.matchmake();
-        System.out.println("checking status of games");
-        gameServer.checkGames();
       }
 
     } catch (Exception e) {

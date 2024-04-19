@@ -289,7 +289,7 @@ public class C4Game implements Runnable {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
 
         } finally {
             try {
