@@ -352,6 +352,8 @@ public class C4Game implements Runnable {
             // indicate that the game has started
             writer1.println("Connect Four!");
             writer2.println("Connect Four!");
+            writer1.println("Welcome Player 1");
+            writer2.println("Welcome Player 2");
 
             // make the board and send it
             this.generateBoard();
@@ -359,8 +361,8 @@ public class C4Game implements Runnable {
 
             // while the game is not over, keep alternating moves
             while (gameNotOver()) {
-                writer1.println("Player1's Turn");
-                writer2.println("Player1's Turn");
+                writer1.println("Current Turn: Player 1");
+                writer2.println("Current Turn: Player 1");
                 makeMove(writer1, reader1, 1);
 
                 // send board to players after each move
@@ -371,8 +373,8 @@ public class C4Game implements Runnable {
                     break;
                 }
 
-                writer1.println("Player2's Turn");
-                writer2.println("Player2's Turn");
+                writer1.println("Current Turn: Player 2");
+                writer2.println("Current Turn: Player 2");
                 makeMove(writer2, reader2, 2);
 
                 // send board to players after each move
