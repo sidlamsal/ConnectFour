@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 
 /**
- * This class is used to check active connect four games.
+ * This class is used to 
  * 
  * @author Pranav Mishra
  * @author Sid Lamsal
@@ -9,7 +9,6 @@ import java.util.ArrayList;
  */
 public class C4CheckGame implements Runnable {
 
-    // array list of threads representing Connect Four games
     private ArrayList<Thread> gamesList;
 
     public C4CheckGame(ArrayList<Thread> gamesList) {
@@ -20,12 +19,11 @@ public class C4CheckGame implements Runnable {
     public void run() {
         while(true){
             try {
-                // every 10 seconds
                 Thread.sleep(10000);
             } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-            // iterate over the array of games and remove/announce any inactive games
             for (int i = 0; i < gamesList.size(); i++) {
                 Thread t = gamesList.get(i);
                 if (!t.isAlive()) {
