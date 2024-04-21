@@ -12,6 +12,11 @@ public class C4CheckGame implements Runnable {
     // array list of threads representing Connect Four games
     private ArrayList<Thread> gamesList;
 
+    /**
+     * Constructor to initalize a new C4CheckGame object
+     * 
+     * @param gamesList : array list of games to check
+     */
     public C4CheckGame(ArrayList<Thread> gamesList) {
         this.gamesList = gamesList;
     }
