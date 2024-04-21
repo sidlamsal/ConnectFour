@@ -124,13 +124,13 @@ public class C4Game implements Runnable {
      */
     private void makeMove(PrintWriter writer, BufferedReader reader, int playerNumber) throws Exception {
         
-        // Send the player a message indicating how many hints they have left
-        Boolean canMakeHint;
-        if (playerNumber == 1) {
-            writer.println("Player 1, you have " + player1Hints + " hints left.");
+        // Send the player a message indicating if they can ask for a hint
+        Boolean canMakeHint = false;
+        if (playerNumber == 1 && (player1Hints > 0)) {
+            writer.println("Player 1, you may enter 'H' for a hint.");
             canMakeHint = (player1Hints > 0);
-        } else {
-            writer.println("Player 2, you have " + player2Hints + " hints left.");
+        } else if (playerNumber == 2 && (player2Hints > 0)) {
+            writer.println("Player 2, you may enter 'H' for a hint.");
             canMakeHint = (player2Hints > 0);
         }
 
@@ -359,6 +359,8 @@ public class C4Game implements Runnable {
 
             // while the game is not over, keep alternating moves
             while (gameNotOver()) {
+                writer1.println("Player1's Turn");
+                writer2.println("Player1's Turn");
                 makeMove(writer1, reader1, 1);
 
                 // send board to players after each move
@@ -369,6 +371,8 @@ public class C4Game implements Runnable {
                     break;
                 }
 
+                writer1.println("Player2's Turn");
+                writer2.println("Player2's Turn");
                 makeMove(writer2, reader2, 2);
 
                 // send board to players after each move
