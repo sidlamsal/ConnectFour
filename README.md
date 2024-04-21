@@ -1,11 +1,11 @@
 # ConnectFour
-Server-client implementation of Connect-Four using Java and JavaScript.
+Server-client implementation of Connect Four using Java and JavaScript.
 
-This file contains instructions on how to download and execute a Connect4 application built on a client-server paradigm, which supports concurrent games with 2 players each.
+This file contains instructions on how to download and execute a Connect Four application built on a client-server paradigm, which supports concurrent games with 2 players each.
 
 ## Instructions to Download
 
-1. Visit the website at the URL https://github.com/sidlamsal/ConnectFour/tree/main/C4V3. Here, you will see a list of files created for the Connect4 game. The three files that are required to be downloaded are C4Client.java, C4Server.java, C4Game.java, and C4CheckGame.java
+1. Visit the website at the URL https://github.com/sidlamsal/ConnectFour/tree/main/C4V3. Here, you will see a list of files created for the Connect Four game. The three files that are required to be downloaded are C4Client.java, C4Server.java, C4Game.java, and C4CheckGame.java
 
 2. To download these files, click on the file name, which will take you to the page where the particular file will be displayed. In the top right corner, click on the button that says "Download raw file" when hovered over. Repeat this step for each file mentioned in the previous step.
 
