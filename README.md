@@ -33,7 +33,6 @@ This command allows the server to start running on the localhost machine at port
 3. Execute the client file twice - in two different terminals - using the following command.
 ```
 java C4Client localhost 12345
-java C4Client localhost 12345
 ```
 
 At the moment, we are assuming that the server and client are running on the same machine (localhost). There have been varying levels of success running the server on a separate machine and connecting different players from different machines. For best results, we suggest running both the server and clients on the same machine as we have detailed above.
