@@ -17,20 +17,20 @@ This file contains instructions on how to download and execute a Connect Four ap
 
 Note that this step assumes that your device has a functioning java virtual machine (JVM), as it makes use of the javac command that can read the source files and compile them into class files to run on the JVM. To check if you have the javac command installed properly, open a terminal window and type javac -version. If this does not return a version number, visit the oracle website to download the Java Development Kit (JDK) at the following URL: https://www.oracle.com/java/technologies/downloads/.
 
-1. Navigate into the directories containing the downloaded files via a command line terminal, and compile both the server and the client files via their respective commands
+1. Navigate into the directories containing the downloaded files via a command line terminal, and compile both the server and the client files via their respective commands.
 ```
 javac C4Client.java 
 javac C4Server.java
 ```
 
-2. Execute the server file using the command 
+2. Execute the server file using the following command. 
 ```
 java C4Server
 ```
 
 This command allows the server to start running on the localhost machine at port number 12345.
 
-3. Execute the client file twice - in two different terminals - using the command
+3. Execute the client file twice - in two different terminals - using the following command.
 ```
 java C4Client localhost 12345
 java C4Client localhost 12345
