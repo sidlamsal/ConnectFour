@@ -1,6 +1,8 @@
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * This class is used to run a game of Connect-Four with 2 players.
@@ -21,6 +23,7 @@ public class C4Game implements Runnable {
     private int player1Hints = 1;
     private int player2Hints = 1;
     int[][] gameBoard = generateBoard();
+    private Boolean TO = false;
 
     /**
      * Constructor method for creating a new C4Game object.
@@ -123,7 +126,7 @@ public class C4Game implements Runnable {
      * @throws Exception : if any error occurs
      */
     private void makeMove(PrintWriter writer, BufferedReader reader, int playerNumber) throws Exception {
-        
+        String changeRequest = null;
         // Send the player a message indicating if they can ask for a hint
         Boolean canMakeHint = false;
         if (playerNumber == 1 && (player1Hints > 0)) {
@@ -134,14 +137,30 @@ public class C4Game implements Runnable {
             canMakeHint = (player2Hints > 0);
         }
 
-        // The following line signlas to the client that it is their turn to make a move
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                // Throw a TimeoutException after the timeout
+                throw new RuntimeException("Timeout occurred while waiting for input");
+            }
+        }, 30000);
+
+        // The following line signals to the client that it is their turn to make a move
         writer.println("Enter the column (0-6 - left to right) to change:");
 
-        // Read the input from the player
-        String changeRequest = reader.readLine();
+        try {
+            changeRequest = reader.readLine();
+            timer.cancel();
+        } catch (Exception e) {
+            writer.println("You took too long, game over!");
+        }
 
-        // If the player wants to make a hint and has hints remaining
-        if ((changeRequest.contains("H")) && canMakeHint) {
+        if (changeRequest==null){
+            TO = true;
+        
+        } else if ((changeRequest.contains("H")) && canMakeHint) {
+            // If the player wants to make a hint and has hints remaining
             // API call to get best move
             int bestMove = this.fetchHint(playerNumber);
 
@@ -359,35 +378,45 @@ public class C4Game implements Runnable {
             this.generateBoard();
             this.sendBoardToPlayers(writer1, writer2);
 
+            int turnPlayer = 1;
+
+            
             // while the game is not over, keep alternating moves
             while (gameNotOver()) {
-                writer1.println("Current Turn: Player 1");
-                writer2.println("Current Turn: Player 1");
-                makeMove(writer1, reader1, 1);
+                writer1.println("Current Turn: Player " + turnPlayer);
+                writer2.println("Current Turn: Player " + turnPlayer);
+                makeMove(writer1, reader1, turnPlayer);
+
+                turnPlayer = 2;
 
                 // send board to players after each move
                 this.sendBoardToPlayers(writer1, writer2);
 
                 // if the game is over break out of loop
-                if (!gameNotOver()) {
+                if (!gameNotOver() || TO) {
                     break;
                 }
 
-                writer1.println("Current Turn: Player 2");
-                writer2.println("Current Turn: Player 2");
-                makeMove(writer2, reader2, 2);
+                writer1.println("Current Turn: Player " + turnPlayer);
+                writer2.println("Current Turn: Player " + turnPlayer);
+                makeMove(writer2, reader2, turnPlayer);
+
+                turnPlayer=1;
 
                 // send board to players after each move
                 this.sendBoardToPlayers(writer1, writer2);
 
                 // if the game is over break out of loop
-                if (!gameNotOver()) {
+                if (!gameNotOver() || TO) {
                     break;
                 }
             }
 
-            // announce game over and result based on who won
-            if (checkWin(1)) {
+            if (TO){
+                writer1.println("GAME OVER! Player "+turnPlayer+ " WINS!");
+                writer1.println("GAME OVER! Player "+turnPlayer+ " WINS!");
+            } else if (checkWin(1)) {
+                // announce game over and result based on who won
                 writer1.println("GAME OVER! Player 1 WINS!");
                 writer2.println("GAME OVER! Player 1 WINS!");
             } else if (checkWin(2)) {
