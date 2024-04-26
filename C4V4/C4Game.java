@@ -25,6 +25,8 @@ public class C4Game implements Runnable {
     private int player2Hints = 1;
     int[][] gameBoard = generateBoard();
     private Boolean TO = false;
+    private File winAudio = new File("win.wav");
+    private File loseAudio = new File("lose.wav");
 
     /**
      * Constructor method for creating a new C4Game object.
@@ -138,17 +140,19 @@ public class C4Game implements Runnable {
             canMakeHint = (player2Hints > 0);
         }
 
+        writer.println("Enter the column (0-6 - left to right) to change:");
+
         // Set up timer for 30-second wait
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                TO=true;
+                TO = true;
                 timer.cancel(); // Stop the timer
             }
-        }, 30000); // 30 seconds
+        }, 10000); // 10 seconds
 
-        while (!TO){
+        while (!TO && changeRequest == null) {
             if (reader.ready()) {
                 // Read input from client
                 changeRequest = reader.readLine();
@@ -366,6 +370,34 @@ public class C4Game implements Runnable {
         writer2.println(sendString);
     }
 
+    private void sendAudio(Socket player, File audioFile) {
+        try {
+            // Create file input stream for the audio file
+            FileInputStream fileInputStream = new FileInputStream(audioFile);
+            BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
+
+            // Get socket's output stream
+            OutputStream outputStream = player.getOutputStream();
+
+            // Send audio file to the client
+            byte[] buffer = new byte[8192];
+            int bytesRead;
+            while ((bytesRead = bufferedInputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, bytesRead);
+            }
+            outputStream.flush();
+
+            // Close resources
+            bufferedInputStream.close();
+            fileInputStream.close();
+            outputStream.close();
+        } catch (Exception e) {
+            System.out.println("problem sending audio");
+            System.out.println(e);
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void run() {
         try {
@@ -416,15 +448,33 @@ public class C4Game implements Runnable {
                 }
             }
 
+            Socket winner = null;
+            Socket loser = null;
+
             if (TO) {
                 sendToBothPlayer(writer1, writer2, "GAME OVER! Player " + turnPlayer + " WINS VIA TIMEOUT!");
+                if (turnPlayer == 1){
+                    winner = player1;
+                } else {
+                    winner = player2;
+                }  
+                sendAudio(winner, winAudio);
             } else if (checkWin(1)) {
-                // announce game over and result based on who won
                 sendToBothPlayer(writer1, writer2, "GAME OVER! Player 1 WINS!");
+                winner = player1;
+                loser = player2;
+                sendAudio(winner, winAudio);
+                sendAudio(loser, loseAudio);
             } else if (checkWin(2)) {
                 sendToBothPlayer(writer1, writer2, "GAME OVER! Player 2 WINS!");
+                winner = player2;
+                loser = player1;
+                sendAudio(winner, winAudio);
+                sendAudio(loser, loseAudio);
             } else {
                 sendToBothPlayer(writer1, writer2, "GAME OVER! It's a draw!");
+                sendAudio(player1, winAudio);
+                sendAudio(player2, winAudio);
             }
 
         } catch (Exception e) {

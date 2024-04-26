@@ -1,7 +1,15 @@
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.DataLine;
+import javax.sound.sampled.SourceDataLine;
 
 /**
  * This class is used to play a game of Connect-Four as a player.
@@ -11,6 +19,47 @@ import java.net.Socket;
  * @version 3.0
  */
 public class C4Client {
+
+    private static void playAudio(Socket socket) {
+        try {
+            // Get input stream from the server
+            InputStream inputStream = socket.getInputStream();
+
+            // Wrap the input stream in a BufferedInputStream
+            BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
+
+            // Create audio input stream
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(bufferedInputStream);
+
+            // Get audio format
+            AudioFormat audioFormat = audioInputStream.getFormat();
+
+            // Specify audio format for playback
+            DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
+
+            // Open data line for playback
+            SourceDataLine sourceDataLine = (SourceDataLine) AudioSystem.getLine(info);
+            sourceDataLine.open(audioFormat);
+            sourceDataLine.start();
+
+            // Write audio data to the data line
+            byte[] buffer = new byte[8192];
+            int bytesRead;
+            while ((bytesRead = audioInputStream.read(buffer)) != -1) {
+                sourceDataLine.write(buffer, 0, bytesRead);
+            }
+
+            // Close resources
+            sourceDataLine.drain();
+            sourceDataLine.close();
+            audioInputStream.close();
+            bufferedInputStream.close();
+            inputStream.close();
+        } catch (Exception e) {
+            System.out.println("problem getting/playing audio");
+            e.printStackTrace();
+        }
+    }
 
     public static void main(String[] args) {
         try {
@@ -46,10 +95,14 @@ public class C4Client {
                 System.out.println(line);
                 // if server asks for input
                 if (line.contains("Enter the column (0-6 - left to right) to change:")) {
-                    // read input from terminal
-                    BufferedReader consoleReader = new BufferedReader(new InputStreamReader(System.in));
-                    String input = consoleReader.readLine();
-                    writer.println(input); // Send the change request to the server
+                    try {
+                        BufferedReader consoleReader = new BufferedReader(new InputStreamReader(System.in));
+                        String input = consoleReader.readLine();
+                        writer.println(input); // Send the change request to the server
+                    } catch (Exception e) {
+                        System.out.println("You took too long! Game Over, you LOSE.");
+                        break;
+                    }
                 }
                 // check for end of game
                 if (line.contains("GAME OVER!")) {
@@ -57,11 +110,11 @@ public class C4Client {
                 }
             }
 
-            reader.close();
-            writer.close();
+            playAudio(socket);
+
             socket.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("You took too long or game crashed! Game Over, you LOSE.");
         }
     }
 }
