@@ -147,8 +147,8 @@ public class C4Server {
     try {
       // Initialize a new Connect-Four server object and log that the server has started.
       C4Server gameServer = new C4Server("localhost", 12345);
-      System.out.println("Server started at IP: " + gameServer.ipAddress + " and port: " + gameServer.serverPort
-          + ".");
+      System.out.println("*Server started at IP: " + gameServer.ipAddress + " and port: " + gameServer.serverPort
+          + ".*");
       
       // Start a C4CheckGame thread to check/remove games that have ended in real time  
       Thread checkGamesThread = new Thread(new C4CheckGame(gameServer.gamesList));
@@ -157,7 +157,7 @@ public class C4Server {
 
       while (waitingForPlayers) {
         // Accept player
-        System.out.println("Waiting for players to connect");
+        System.out.println("Waiting for players to connect\n");
         Socket player = gameServer.serverSocket.accept();
         System.out.println("A player has joined on socket " + player.getPort() + ".");
 

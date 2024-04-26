@@ -35,7 +35,7 @@ public class C4CheckGame implements Runnable {
                 Thread t = gamesList.get(i);
                 if (!t.isAlive()) {
                     gamesList.remove(i);
-                    System.out.println(t.getName() + " has ended.");
+                    System.out.println("<GAME CHECKER: " + t.getName() + " has ended.>");
                 }
             }
         }

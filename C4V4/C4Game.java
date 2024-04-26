@@ -15,7 +15,8 @@ public class C4Game implements Runnable {
 
     /**
      * player1 and player2: Socket objects representing 2 players
-     * player1Hints and player2Hints: integer to keep track of how many hints each player has
+     * player1Hints and player2Hints: integer to keep track of how many hints each
+     * player has
      * gameBoard: 2d array representing a 7x7 Connect-Four board
      */
     private Socket player1;
@@ -83,10 +84,10 @@ public class C4Game implements Runnable {
     }
 
     /**
-     * Method used to update the borad. 
+     * Method used to update the borad.
      * Used when a player makes a move.
      * 
-     * @param column : the column to add a "chip"
+     * @param column       : the column to add a "chip"
      * @param playerNumber : the player number used to indicate who made the move
      */
     private void updateBoard(int column, int playerNumber) {
@@ -94,10 +95,10 @@ public class C4Game implements Runnable {
         int row = 0;
         // Get the row where the move should be placed.
         // To do this, we increment from the bottom row up and find the first row
-        // in bounds that is empty. 
-        // context: In connect-4, the player picks a column and a colored chip is 
-        //          dropped into that column. Here we must determine which row the 
-        //          the chip would fall into
+        // in bounds that is empty.
+        // context: In connect-4, the player picks a column and a colored chip is
+        // dropped into that column. Here we must determine which row the
+        // the chip would fall into
         while ((row < 7) && (gameBoard[row][column] == 0)) {
             row++;
         }
@@ -120,8 +121,8 @@ public class C4Game implements Runnable {
     /**
      * Method used to simulate a players turn.
      * 
-     * @param writer : output stream of player, used to send messages
-     * @param reader : input stream of player used to read move
+     * @param writer       : output stream of player, used to send messages
+     * @param reader       : input stream of player used to read move
      * @param playerNumber : integer representing which player's turn it is
      * @throws Exception : if any error occurs
      */
@@ -137,35 +138,35 @@ public class C4Game implements Runnable {
             canMakeHint = (player2Hints > 0);
         }
 
+        // Set up timer for 30-second wait
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                // Throw a TimeoutException after the timeout
-                throw new RuntimeException("Timeout occurred while waiting for input");
+                TO=true;
+                timer.cancel(); // Stop the timer
             }
-        }, 30000);
+        }, 30000); // 30 seconds
 
-        // The following line signals to the client that it is their turn to make a move
-        writer.println("Enter the column (0-6 - left to right) to change:");
-
-        try {
-            changeRequest = reader.readLine();
-            timer.cancel();
-        } catch (Exception e) {
-            writer.println("You took too long, game over!");
+        while (!TO){
+            if (reader.ready()) {
+                // Read input from client
+                changeRequest = reader.readLine();
+                timer.cancel();
+            }
         }
 
-        if (changeRequest==null){
+        if (changeRequest == null) {
             TO = true;
-        
+
         } else if ((changeRequest.contains("H")) && canMakeHint) {
             // If the player wants to make a hint and has hints remaining
             // API call to get best move
             int bestMove = this.fetchHint(playerNumber);
 
             if (bestMove != -1) {
-                // if best move can be determined, tell player, update board, and decrement number of moves left 
+                // if best move can be determined, tell player, update board, and decrement
+                // number of moves left
                 writer.println("The best move is column " + bestMove);
                 updateBoard(bestMove, playerNumber);
                 if (playerNumber == 1) {
@@ -208,7 +209,8 @@ public class C4Game implements Runnable {
      * a column name) for the player making the move (playerMoving)
      * 
      * @param playerMoving : the player who is receiving the hint
-     * @return an integer representing the column for the best move or -1 if it cannot be found
+     * @return an integer representing the column for the best move or -1 if it
+     *         cannot be found
      */
     private int fetchHint(int playerMoving) {
         // Constructing the board state string
@@ -277,7 +279,8 @@ public class C4Game implements Runnable {
      * This function checks if a game is over.
      * This can happen if either player has won or the board is full.
      * 
-     * @return if a game is not over, the function returns true. Otherwise, it returns false
+     * @return if a game is not over, the function returns true. Otherwise, it
+     *         returns false
      */
     private boolean gameNotOver() {
         if (checkWin(1) || checkWin(2)) {
@@ -308,7 +311,7 @@ public class C4Game implements Runnable {
      * @return true/false if the player has or has not won
      */
     private boolean checkWin(int player) {
-        // Check horizontal 
+        // Check horizontal
         for (int row = 0; row < 7; row++) {
             for (int col = 0; col < 4; col++) {
                 if (gameBoard[row][col] == player &&
@@ -358,6 +361,11 @@ public class C4Game implements Runnable {
         return false;
     }
 
+    private void sendToBothPlayer(PrintWriter writer1, PrintWriter writer2, String sendString) {
+        writer1.println(sendString);
+        writer2.println(sendString);
+    }
+
     @Override
     public void run() {
         try {
@@ -369,8 +377,7 @@ public class C4Game implements Runnable {
             PrintWriter writer2 = new PrintWriter(player2.getOutputStream(), true);
 
             // indicate that the game has started
-            writer1.println("Connect Four!");
-            writer2.println("Connect Four!");
+            sendToBothPlayer(writer1, writer2, "Connect Four!");
             writer1.println("Welcome Player 1");
             writer2.println("Welcome Player 2");
 
@@ -380,11 +387,9 @@ public class C4Game implements Runnable {
 
             int turnPlayer = 1;
 
-            
             // while the game is not over, keep alternating moves
             while (gameNotOver()) {
-                writer1.println("Current Turn: Player " + turnPlayer);
-                writer2.println("Current Turn: Player " + turnPlayer);
+                sendToBothPlayer(writer1, writer2, "Current Turn: Player " + turnPlayer);
                 makeMove(writer1, reader1, turnPlayer);
 
                 turnPlayer = 2;
@@ -397,11 +402,10 @@ public class C4Game implements Runnable {
                     break;
                 }
 
-                writer1.println("Current Turn: Player " + turnPlayer);
-                writer2.println("Current Turn: Player " + turnPlayer);
+                sendToBothPlayer(writer1, writer2, "Current Turn: Player " + turnPlayer);
                 makeMove(writer2, reader2, turnPlayer);
 
-                turnPlayer=1;
+                turnPlayer = 1;
 
                 // send board to players after each move
                 this.sendBoardToPlayers(writer1, writer2);
@@ -412,23 +416,19 @@ public class C4Game implements Runnable {
                 }
             }
 
-            if (TO){
-                writer1.println("GAME OVER! Player "+turnPlayer+ " WINS!");
-                writer1.println("GAME OVER! Player "+turnPlayer+ " WINS!");
+            if (TO) {
+                sendToBothPlayer(writer1, writer2, "GAME OVER! Player " + turnPlayer + " WINS VIA TIMEOUT!");
             } else if (checkWin(1)) {
                 // announce game over and result based on who won
-                writer1.println("GAME OVER! Player 1 WINS!");
-                writer2.println("GAME OVER! Player 1 WINS!");
+                sendToBothPlayer(writer1, writer2, "GAME OVER! Player 1 WINS!");
             } else if (checkWin(2)) {
-                writer1.println("GAME OVER! Player 2 WINS!");
-                writer2.println("GAME OVER! Player 2 WINS!");
+                sendToBothPlayer(writer1, writer2, "GAME OVER! Player 2 WINS!");
             } else {
-                writer1.println("GAME OVER! It's a draw!");
-                writer2.println("GAME OVER! It's a draw!");
+                sendToBothPlayer(writer1, writer2, "GAME OVER! It's a draw!");
             }
 
         } catch (Exception e) {
-            //e.printStackTrace();
+            // e.printStackTrace();
 
         } finally {
             try {
