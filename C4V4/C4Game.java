@@ -26,7 +26,7 @@ public class C4Game implements Runnable {
     int[][] gameBoard = generateBoard();
     private Boolean TO = false;
     private File winAudio = new File("win.wav");
-    private File loseAudio = new File("lose.wav");
+    private File loseAudio = new File("lost.wav");
 
     /**
      * Constructor method for creating a new C4Game object.
@@ -419,6 +419,12 @@ public class C4Game implements Runnable {
 
             int turnPlayer = 1;
 
+
+            gameBoard[6][0]= 1;
+            gameBoard[5][0]= 1;
+            gameBoard[4][0]= 1;
+            gameBoard[3][0]= 1;
+
             // while the game is not over, keep alternating moves
             while (gameNotOver()) {
                 sendToBothPlayer(writer1, writer2, "Current Turn: Player " + turnPlayer);
@@ -457,22 +463,26 @@ public class C4Game implements Runnable {
                     winner = player1;
                 } else {
                     winner = player2;
-                }  
+                }
+                Thread.sleep(1000);  
                 sendAudio(winner, winAudio);
             } else if (checkWin(1)) {
                 sendToBothPlayer(writer1, writer2, "GAME OVER! Player 1 WINS!");
                 winner = player1;
                 loser = player2;
+                Thread.sleep(1000);
                 sendAudio(winner, winAudio);
                 sendAudio(loser, loseAudio);
             } else if (checkWin(2)) {
                 sendToBothPlayer(writer1, writer2, "GAME OVER! Player 2 WINS!");
                 winner = player2;
                 loser = player1;
+                Thread.sleep(1000);
                 sendAudio(winner, winAudio);
                 sendAudio(loser, loseAudio);
             } else {
                 sendToBothPlayer(writer1, writer2, "GAME OVER! It's a draw!");
+                Thread.sleep(1000);
                 sendAudio(player1, winAudio);
                 sendAudio(player2, winAudio);
             }
