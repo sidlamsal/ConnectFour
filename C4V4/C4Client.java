@@ -21,6 +21,11 @@ import javax.sound.sampled.SourceDataLine;
  */
 public class C4Client {
 
+    /**
+     * Used to play audio recieved from server
+     * 
+     * @param socket : player socket
+     */
     private static void playAudio(Socket socket) {
         try {
             InputStream is = socket.getInputStream();

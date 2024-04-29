@@ -365,11 +365,24 @@ public class C4Game implements Runnable {
         return false;
     }
 
+    /**
+     * Used to send some string to both players
+     * 
+     * @param writer1 : write stream of player 1
+     * @param writer2 : write stream of player 2
+     * @param sendString : string to send
+     */
     private void sendToBothPlayer(PrintWriter writer1, PrintWriter writer2, String sendString) {
         writer1.println(sendString);
         writer2.println(sendString);
     }
 
+    /**
+     * Used to send audio to player
+     * 
+     * @param player : to whom to send the audio to
+     * @param audioFile : which audio (.wav) file to send
+     */
     private void sendAudio(Socket player, File audioFile) {
         try {
             // Create file input stream for the audio file
