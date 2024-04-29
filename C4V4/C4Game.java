@@ -150,7 +150,7 @@ public class C4Game implements Runnable {
                 TO = true;
                 timer.cancel(); // Stop the timer
             }
-        }, 10000); // 10 seconds
+        }, 30000); // 30 seconds
 
         while (!TO && changeRequest == null) {
             if (reader.ready()) {
@@ -419,12 +419,6 @@ public class C4Game implements Runnable {
 
             int turnPlayer = 1;
 
-
-            gameBoard[6][0]= 1;
-            gameBoard[5][0]= 1;
-            gameBoard[4][0]= 1;
-            gameBoard[3][0]= 1;
-
             // while the game is not over, keep alternating moves
             while (gameNotOver()) {
                 sendToBothPlayer(writer1, writer2, "Current Turn: Player " + turnPlayer);
@@ -472,6 +466,7 @@ public class C4Game implements Runnable {
                 loser = player2;
                 Thread.sleep(1000);
                 sendAudio(winner, winAudio);
+                Thread.sleep(5000);
                 sendAudio(loser, loseAudio);
             } else if (checkWin(2)) {
                 sendToBothPlayer(writer1, writer2, "GAME OVER! Player 2 WINS!");

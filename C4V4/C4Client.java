@@ -8,6 +8,7 @@ import java.net.Socket;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.SourceDataLine;
 
@@ -22,39 +23,17 @@ public class C4Client {
 
     private static void playAudio(Socket socket) {
         try {
-            // Get input stream from the server
-            InputStream inputStream = socket.getInputStream();
+            InputStream is = socket.getInputStream();
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new BufferedInputStream(is));
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioInputStream);
+            clip.start();
 
-            // Wrap the input stream in a BufferedInputStream
-            BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
+            // Wait for the audio to finish playing
+            Thread.sleep(clip.getMicrosecondLength() / 1000);
 
-            // Create audio input stream
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(bufferedInputStream);
-
-            // Get audio format
-            AudioFormat audioFormat = audioInputStream.getFormat();
-
-            // Specify audio format for playback
-            DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
-
-            // Open data line for playback
-            SourceDataLine sourceDataLine = (SourceDataLine) AudioSystem.getLine(info);
-            sourceDataLine.open(audioFormat);
-            sourceDataLine.start();
-
-            // Write audio data to the data line
-            byte[] buffer = new byte[8192];
-            int bytesRead;
-            while ((bytesRead = audioInputStream.read(buffer)) != -1) {
-                sourceDataLine.write(buffer, 0, bytesRead);
-            }
-
-            // Close resources
-            sourceDataLine.drain();
-            sourceDataLine.close();
-            audioInputStream.close();
-            bufferedInputStream.close();
-            inputStream.close();
+            clip.close();
+            is.close();
         } catch (Exception e) {
             System.out.println("problem getting/playing audio");
             e.printStackTrace();

@@ -139,9 +139,8 @@ public class C4Server {
     playerQueue = activePlayers;
   }
 
-
   public static void main(String[] args) {
-    // Dummy "True" variable for readability 
+    // Dummy "True" variable for readability
     boolean waitingForPlayers = true;
 
     try {
