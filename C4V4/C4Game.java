@@ -479,7 +479,6 @@ public class C4Game implements Runnable {
                 loser = player2;
                 Thread.sleep(1000);
                 sendAudio(winner, winAudio);
-                Thread.sleep(5000);
                 sendAudio(loser, loseAudio);
             } else if (checkWin(2)) {
                 sendToBothPlayer(writer1, writer2, "GAME OVER! Player 2 WINS!");
