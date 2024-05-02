@@ -38,15 +38,73 @@ public class C4Client {
             Thread.sleep(clip.getMicrosecondLength() / 1000);
 
             clip.close();
+            audioInputStream.close();
             is.close();
         } catch (Exception e) {
             System.out.println("problem getting/playing audio");
-            e.printStackTrace();
+        }
+    }
+
+    private static void PreGame(Socket socket) {
+        boolean gameStarted = false;
+        String line;
+        try {
+            // get I/O streams to server
+            BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            PrintWriter writer = new PrintWriter(socket.getOutputStream(), true);
+            System.out.println("Current state: pre-game");
+
+            while (!gameStarted) {
+                line = reader.readLine();
+                if (line != null){
+                    if (line.contains("marco")) {
+                        writer.println("polo");
+                    } else if (line.contains("Connect Four!")) {
+                        // this indicates that the game has started
+                        gameStarted = true;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Problem during pre-game");
+        }
+    }
+
+    private static String getInputFromUser() {
+        return System.console().readLine();
+    }
+
+    private static void playGame(Socket socket) {
+        Boolean gameOver = false;
+        String line;
+
+        try {
+            // get I/O streams to server
+            BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            PrintWriter writer = new PrintWriter(socket.getOutputStream(), true);
+            System.out.println("Current state: play game");
+
+            while (!gameOver) {
+                line = reader.readLine();
+                System.out.println(line);
+
+                if(line.contains("Enter the column (0-6 - left to right) to change:")){
+                    String input = getInputFromUser();
+                    writer.println(input);
+                }
+                else if (line.contains("GAME OVER!")){
+                    gameOver = true;
+                }
+            }
+
+        } catch (Exception e) {
+            System.out.println("Problem during game. Did you take too long??");
+            System.out.println(e);
         }
     }
 
     public static void main(String[] args) {
-        try {
+        try{
             // get server IP and port to connect to
             String ServerIP = args[0];
             int ServerPortNumber = Integer.parseInt(args[1]);
@@ -55,50 +113,20 @@ public class C4Client {
             Socket socket = new Socket(ServerIP, ServerPortNumber);
             System.out.println("Matchmaking...");
 
-            // get I/O streams to server
-            BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            PrintWriter writer = new PrintWriter(socket.getOutputStream(), true);
-
-            boolean gameStarted = false;
-            String line;
-
             // while the game has not started, check for a message from the server and
             // respond. This is used to ping that the player is still active.
-            while (!gameStarted) {
-                line = reader.readLine();
-                if (line.contains("marco")) {
-                    writer.println("polo");
-                } else if (line.contains("Connect Four!")) {
-                    // this indicates that the game has started
-                    break;
-                }
-            }
+            PreGame(socket);
 
-            // continously print output from server
-            while ((line = reader.readLine()) != null) {
-                System.out.println(line);
-                // if server asks for input
-                if (line.contains("Enter the column (0-6 - left to right) to change:")) {
-                    try {
-                        BufferedReader consoleReader = new BufferedReader(new InputStreamReader(System.in));
-                        String input = consoleReader.readLine();
-                        writer.println(input); // Send the change request to the server
-                    } catch (Exception e) {
-                        System.out.println("You took too long! Game Over, you LOSE.");
-                        break;
-                    }
-                }
-                // check for end of game
-                if (line.contains("GAME OVER!")) {
-                    break;
-                }
-            }
+            // continously print output from server and play the game
+            playGame(socket);
 
             playAudio(socket);
 
             socket.close();
-        } catch (Exception e) {
-            System.out.println("You took too long or game crashed! Game Over, you LOSE.");
+
+        }
+        catch (Exception e){
+            System.out.println("Game Crashed");
         }
     }
 }
