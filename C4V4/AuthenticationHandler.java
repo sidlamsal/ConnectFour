@@ -15,10 +15,10 @@ public class AuthenticationHandler implements Runnable  {
     private Boolean isAuth;
     private ArrayList<Socket> playerQueue;
 
-    public AuthenticationHandler(HashMap<String, String> logs, Socket player, Boolean isAuth, ArrayList<Socket> playerQueue){
+    public AuthenticationHandler(HashMap<String, String> logs, Socket player, ArrayList<Socket> playerQueue){
         this.logs = logs;
         this.player = player;
-        this.isAuth = isAuth;
+        this.isAuth = false;
         this.playerQueue = playerQueue;
         try{
             this.reader = new BufferedReader(new InputStreamReader(player.getInputStream()));

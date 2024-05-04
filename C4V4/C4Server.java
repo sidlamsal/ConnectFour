@@ -244,8 +244,8 @@ public class C4Server {
         Socket player = gameServer.serverSocket.accept();
         System.out.println("A player has joined on socket " + player.getPort() + ".");
 
-        // Add player to queue
-        gameServer.playerQueue.add(player);
+        Thread auth = new Thread(new AuthenticationHandler(gameServer.logs, player, gameServer.playerQueue));
+        auth.start();
 
         // Attempt to matchmake
         System.out.println("Matchmaking...");
