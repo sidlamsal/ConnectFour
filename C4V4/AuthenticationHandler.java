@@ -3,20 +3,23 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class AuthenticationHandler implements Runnable  {
 
-    HashMap<String, String> logs;
-    Socket player;
-    BufferedReader reader;
-    PrintWriter writer;
-    Boolean isAuth;
+    private HashMap<String, String> logs;
+    private Socket player;
+    private BufferedReader reader;
+    private PrintWriter writer;
+    private Boolean isAuth;
+    private ArrayList<Socket> playerQueue;
 
-    public AuthenticationHandler(HashMap<String, String> logs, Socket player, Boolean isAuth){
+    public AuthenticationHandler(HashMap<String, String> logs, Socket player, Boolean isAuth, ArrayList<Socket> playerQueue){
         this.logs = logs;
         this.player = player;
         this.isAuth = isAuth;
+        this.playerQueue = playerQueue;
         try{
             this.reader = new BufferedReader(new InputStreamReader(player.getInputStream()));
             this.writer = new PrintWriter(player.getOutputStream(), true);
@@ -91,6 +94,9 @@ public class AuthenticationHandler implements Runnable  {
     @Override
     public void run() {
         authentication();
+        if (this.isAuth){
+            playerQueue.add(this.player);
+        }
     }
     
 }
