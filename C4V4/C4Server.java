@@ -83,6 +83,13 @@ public class C4Server {
     return readLogs;
   }
 
+  /**
+   * used to add content to file
+   * 
+   * @param filePath
+   * @param content
+   * @throws IOException
+   */
   public static void appendStringToFile(String filePath, String content) throws IOException {
     Files.write(Paths.get(filePath), content.getBytes(), StandardOpenOption.APPEND);
   }
