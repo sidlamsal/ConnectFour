@@ -252,6 +252,7 @@ public class C4Server {
         gameServer.matchmake();
       }
 
+      gameServer.updateLogsInFile("C4V4\\C4Logs.txt");
     } catch (Exception e) {
       e.printStackTrace();
     }
