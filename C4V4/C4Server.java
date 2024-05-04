@@ -1,5 +1,8 @@
 import java.io.*;
 import java.net.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.*;
 
 /**
@@ -33,6 +36,7 @@ public class C4Server {
   private int gameNumber;
   InetAddress ipAddress;
   int serverPort;
+  private HashMap<String, String> logs = readLogsFromFile("C4V4\\C4Logs.txt");// set to file path
 
   /**
    * Constructor method for creating a new Connect-Four server object.
@@ -49,6 +53,58 @@ public class C4Server {
     gameNumber = 0;
     playerQueue = new ArrayList<>();
     gamesList = new ArrayList<>();
+  }
+
+  /**
+   * Method that reads the logs in the file specified in the parameter and returns
+   * a HashMap comprising the key value pairs found (username and password)
+   * 
+   * @param filename the path of the file containing the usernames and passwords
+   * @return a HashMap object containing the username-password pairs stored in the
+   *         file
+   */
+  private static HashMap<String, String> readLogsFromFile(String filename) {
+    HashMap<String, String> readLogs = new HashMap<>();
+
+    try {
+      String logsString = new String(Files.readAllBytes(Paths.get(filename)));
+
+      if (logsString.length() != 0) {
+        String[] logsList = logsString.split("\n");
+        for (int i = 0; i < logsList.length; i++) {
+          String[] usernameAndPassword = logsList[i].split(", ");
+          readLogs.put(usernameAndPassword[0], usernameAndPassword[1]);
+        }
+      }
+    } catch (IOException e) {
+      System.out.println(e);
+    }
+
+    return readLogs;
+  }
+
+  public static void appendStringToFile(String filePath, String content) throws IOException {
+    Files.write(Paths.get(filePath), content.getBytes(), StandardOpenOption.APPEND);
+  }
+
+  /**
+   * Method to update the logs found in the file specified in the file path
+   * 
+   * @param filename the path of the file where the logs of username-password
+   *                 combinations need to be made
+   */
+  private void updateLogsInFile(String filename) {
+    try {
+      Files.write(Paths.get(filename), new byte[0]);
+
+      for (Map.Entry<String, String> entry : logs.entrySet()) {
+        String logString = entry.getKey() + ", " + entry.getValue() + "\n";
+        appendStringToFile(filename, logString);
+      }
+
+    } catch (IOException e) {
+      System.out.println(e);
+    }
   }
 
   /**
