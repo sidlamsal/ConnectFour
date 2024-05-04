@@ -1,7 +1,7 @@
 # ConnectFour
 Server-client implementation of Connect Four using Java and JavaScript.
 
-This file contains instructions on how to download and execute a Connect Four application built on a client-server paradigm, which supports concurrent games with 2 players each.
+This file contains instructions on how to download and execute a Connect Four (C4V3) application built on a client-server paradigm, which supports concurrent games with 2 players each.
 
 ## Instructions to Download
 
