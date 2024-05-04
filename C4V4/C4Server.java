@@ -36,7 +36,7 @@ public class C4Server {
   private int gameNumber;
   InetAddress ipAddress;
   int serverPort;
-  private HashMap<String, String> logs = readLogsFromFile("C4V4\\C4Logs.txt");// set to file path
+  private HashMap<String, String> logs;// set to file path
 
   /**
    * Constructor method for creating a new Connect-Four server object.
@@ -53,6 +53,7 @@ public class C4Server {
     gameNumber = 0;
     playerQueue = new ArrayList<>();
     gamesList = new ArrayList<>();
+    logs = readLogsFromFile("C4V4\\C4Logs.txt");
   }
 
   /**
