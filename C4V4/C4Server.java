@@ -218,6 +218,7 @@ public class C4Server {
           + ".*");
       gameServer.serverSocket.setSoTimeout(10000);
 
+      
       // Start a C4CheckGame thread to check/remove games that have ended in real time
       Thread checkGamesThread = new Thread(new C4CheckGame(gameServer.gamesList));
       checkGamesThread.start();
