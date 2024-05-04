@@ -13,7 +13,7 @@ This file contains instructions on how to download and execute a Connect Four (C
 
 3. To download these files, click on the file name, which will take you to the page where the particular file will be displayed. In the top right corner, click on the button that says "Download raw file" when hovered over. Repeat this step for each file mentioned in the previous step.
 
-Note: To run C4V4 (the newest version with all bonus features), please download all files located in the C4V4 folder which can be found at https://github.com/sidlamsal/ConnectFour/tree/main/C4V4.
+Note: To run C4V4 (the newest version with all bonus features), please download all files located in the C4V4 folder which can be found at https://github.com/sidlamsal/ConnectFour/tree/main/C4V4. Please only download all required files for ONE of the versions. Mixing files can lead to errors. 
 
 ## Instructions to Execute
 
