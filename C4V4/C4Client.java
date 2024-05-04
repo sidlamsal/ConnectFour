@@ -6,12 +6,9 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.io.*;
 
-import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
-import javax.sound.sampled.DataLine;
-import javax.sound.sampled.SourceDataLine;
 
 /**
  * This class is used to play a game of Connect-Four as a player.
@@ -66,7 +63,6 @@ public class C4Client {
             }
             if(line.equals("Success")){
                 System.out.println("You have successfully authenticated");
-                writer.println("Moving to pregame");
                 break;
             }
         }
@@ -87,7 +83,7 @@ public class C4Client {
 
             while (!gameStarted) {
                 line = reader.readLine();
-                System.out.println("Line received should be marco but is: "+line);
+                //System.out.println("Line received should be marco but is: "+line);
                 if (line != null){
                     if (line.contains("marco")) {
                         writer.println("polo");

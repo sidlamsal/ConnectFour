@@ -31,12 +31,12 @@ public class C4Server {
    * serverPort: Integer representing the port number of the server.
    */
   private ServerSocket serverSocket;
-  private ArrayList<Socket> playerQueue;
+  protected ArrayList<Socket> playerQueue;
   private ArrayList<Thread> gamesList;
   private int gameNumber;
   InetAddress ipAddress;
   int serverPort;
-  private HashMap<String, String> logs;// set to file path
+  protected HashMap<String, String> logs;// set to file path
 
   /**
    * Constructor method for creating a new Connect-Four server object.
@@ -53,7 +53,7 @@ public class C4Server {
     gameNumber = 0;
     playerQueue = new ArrayList<>();
     gamesList = new ArrayList<>();
-    logs = readLogsFromFile("C:\\Users\\21sla\\OneDrive - Dickinson College\\Comp352\\ConnectFour\\C4V4\\C4Logs.txt");
+    logs = readLogsFromFile("C4Logs.txt");
   }
 
   /**
@@ -74,7 +74,7 @@ public class C4Server {
         String[] logsList = logsString.split("\n");
         for (int i = 0; i < logsList.length; i++) {
           String[] usernameAndPassword = logsList[i].split(", ");
-          readLogs.put(usernameAndPassword[0], usernameAndPassword[1]);
+          readLogs.put(usernameAndPassword[0], usernameAndPassword[1].trim());
         }
       }
     } catch (IOException e) {
@@ -85,7 +85,7 @@ public class C4Server {
   }
 
   /**
-   * used to add content to file
+   * used to add content to filePath
    * 
    * @param filePath
    * @param content
@@ -125,10 +125,10 @@ public class C4Server {
     // Check that players in the queue are active
     this.checkPlayers();
 
-    while (this.playerQueue.size() >= 2) {
+    while (playerQueue.size() >= 2) {
       // Retrieve the first two player (FIFO)
-      Socket player1 = this.playerQueue.remove(0);
-      Socket player2 = this.playerQueue.remove(0);
+      Socket player1 = playerQueue.remove(0);
+      Socket player2 = playerQueue.remove(0);
 
       // Initialize a new Connect-Four thread
       Thread thread = new Thread(new C4Game(player1, player2));
@@ -163,10 +163,13 @@ public class C4Server {
       // Send message
       writer.println("marco");
 
+      String reponse = reader.readLine();
+
       // If player responds with correct reponse, return true, else flase
-      if (reader.readLine().contains("polo")) {
+      if (reponse.contains("polo")) {
         active = true;
       } else {
+
         active = false;
       }
 
@@ -217,12 +220,12 @@ public class C4Server {
       System.out.println("*Server started at IP: " + gameServer.ipAddress + " and port: " + gameServer.serverPort
           + ".*");
       gameServer.serverSocket.setSoTimeout(10000);
-
       
       // Start a C4CheckGame thread to check/remove games that have ended in real time
       Thread checkGamesThread = new Thread(new C4CheckGame(gameServer.gamesList));
       checkGamesThread.start();
       System.out.println("Started game checking.");
+
 
       while (waitingForPlayers) {
         // Accept player
@@ -231,7 +234,7 @@ public class C4Server {
           Socket player = gameServer.serverSocket.accept();
           System.out.println("A player has joined on socket " + player.getPort() + ".");
   
-          Thread auth = new Thread(new AuthenticationHandler(gameServer.logs, player, gameServer.playerQueue));
+          Thread auth = new Thread(new AuthenticationHandler(gameServer, player));
           auth.start();
         }
         catch(Exception e){
@@ -241,9 +244,9 @@ public class C4Server {
         // Attempt to matchmake
         System.out.println("Matchmaking. Player count: " + gameServer.playerQueue.size());
         gameServer.matchmake();
+        gameServer.updateLogsInFile("C4Logs.txt");
       }
 
-      gameServer.updateLogsInFile("C:\\Users\\21sla\\OneDrive - Dickinson College\\Comp352\\ConnectFour\\C4V4\\C4Logs.txt");
     } catch (Exception e) {
       e.printStackTrace();
     }
