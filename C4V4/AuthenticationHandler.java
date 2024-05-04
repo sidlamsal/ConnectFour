@@ -1,3 +1,11 @@
+/**
+ * This class is used to authenticate a player
+ * 
+ * @author Pranav Mishra
+ * @author Sid Lamsal
+ * @version 4.0
+ */
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -6,11 +14,18 @@ import java.net.Socket;
 
 public class AuthenticationHandler implements Runnable {
 
-    private Socket player;
-    private BufferedReader reader;
-    private PrintWriter writer;
-    private C4Server gameServer;
+    private Socket player;          // player to authenticate
+    private BufferedReader reader;  // used to read messages from player
+    private PrintWriter writer;     // used to send messages to player
+    private C4Server gameServer;    // game server obj which has references to
+                                    // player queue and logs
 
+    /**
+     * Constructor for authenticator
+     * 
+     * @param gameServer
+     * @param player
+     */
     public AuthenticationHandler(C4Server gameServer, Socket player) {
 
         this.player = player;
@@ -23,6 +38,12 @@ public class AuthenticationHandler implements Runnable {
         }
     }
 
+    /**
+     * Used to send question to client and return response 
+     * 
+     * @param question
+     * @return a string representing the client's response
+     */
     private String sendAndReceive(String question) {
 
         writer.println(question);
@@ -37,6 +58,15 @@ public class AuthenticationHandler implements Runnable {
         return response;
     }
 
+    /**
+     * Used to go through sign in protocol
+     * 1. Asks for username
+     * 2. If that is in the logs
+     * 3. asks for password
+     * 4. if both match
+     * 5. add to player queue
+     * 
+     */
     private void signIn() {
         String userName = this.sendAndReceive("Enter your username");
         if (this.gameServer.logs.containsKey(userName)) {
@@ -56,6 +86,11 @@ public class AuthenticationHandler implements Runnable {
         }
     }
 
+    /**
+     * Used to go through sign up protocol
+     * Ask for a valid user name and password
+     * Add player to queue
+     */
     private void signUp() {
         String username = this.sendAndReceive("Enter your username");
 
@@ -70,6 +105,10 @@ public class AuthenticationHandler implements Runnable {
         }
     }
 
+    /**
+     * Used to authenticate player
+     * Ask the player if they want to sign up or in, and initialize respective protocol
+     */
     private void authentication() {
         String InOrUp = this.sendAndReceive("Enter 1 to sign in, or 2 to sign up");
 
