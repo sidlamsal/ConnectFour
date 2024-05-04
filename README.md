@@ -13,6 +13,8 @@ This file contains instructions on how to download and execute a Connect Four (C
 
 3. To download these files, click on the file name, which will take you to the page where the particular file will be displayed. In the top right corner, click on the button that says "Download raw file" when hovered over. Repeat this step for each file mentioned in the previous step.
 
+Note: To run C4V4, please download all files located in the C4V4 folder which can be found at https://github.com/sidlamsal/ConnectFour/tree/main/C4V4.
+
 ## Instructions to Execute
 
 Note that this step assumes that your device has a functioning java virtual machine (JVM), as it makes use of the javac command that can read the source files and compile them into class files to run on the JVM. To check if you have the javac command installed properly, open a terminal window and type javac -version. If this does not return a version number, visit the oracle website to download the Java Development Kit (JDK) at the following URL: https://www.oracle.com/java/technologies/downloads/.
