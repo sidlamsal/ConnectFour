@@ -12,13 +12,11 @@ public class AuthenticationHandler implements Runnable  {
     private Socket player;
     private BufferedReader reader;
     private PrintWriter writer;
-    private Boolean isAuth;
     private ArrayList<Socket> playerQueue;
 
     public AuthenticationHandler(HashMap<String, String> logs, Socket player, ArrayList<Socket> playerQueue){
         this.logs = logs;
         this.player = player;
-        this.isAuth = false;
         this.playerQueue = playerQueue;
         try{
             this.reader = new BufferedReader(new InputStreamReader(player.getInputStream()));
@@ -29,14 +27,14 @@ public class AuthenticationHandler implements Runnable  {
         }
     }
 
-    private String sendAndRecieve(String question){
+    private String sendAndReceive(String question){
         
         writer.println(question);
 
         String response = null;
 
         try {
-            reader.readLine();
+            response = reader.readLine();
         } catch (IOException e) {
             System.out.println(e);
         }
@@ -44,11 +42,12 @@ public class AuthenticationHandler implements Runnable  {
     }
 
     private void signIn(){
-        String userName = this.sendAndRecieve("Enter your username");
+        String userName = this.sendAndReceive("Enter your username");
         if (this.logs.containsKey(userName)){
-            String password = this.sendAndRecieve("Enter your password");
+            String password = this.sendAndReceive("Enter your password");
             if (logs.get("username") == password){
-                this.isAuth = true;
+                playerQueue.add(this.player);
+                writer.println("Success");
             }
             else{
                 writer.println("Password is incorrect.");
@@ -64,39 +63,38 @@ public class AuthenticationHandler implements Runnable  {
     }
 
     private void signUp(){
-        String username = this.sendAndRecieve("Enter your username");
+        String username = this.sendAndReceive("Enter your username");
 
         if (this.logs.containsKey(username)){
             writer.println("Username is taken!");
             authentication(); // retry
         }
         else{
-            String password = this.sendAndRecieve("Enter your password");
+            String password = this.sendAndReceive("Enter your password");
             this.logs.put(username, password);
-            this.isAuth = true;
+            playerQueue.add(this.player);
+            writer.println("Success");
         }
     }
 
     private void authentication(){
-        String InOrUp = this.sendAndRecieve("Enter 1 to sign in, or 2 to sign up");
+        String InOrUp = this.sendAndReceive("Enter 1 to sign in, or 2 to sign up");
 
-        if (InOrUp == "1"){
+        if (InOrUp.equals("1")){
             this.signIn();
         }
-        else if (InOrUp == "2"){
+        else if (InOrUp.equals("2")){
             this.signUp();
         }
         else {
             writer.println("Authentication Failed!");
+            authentication();
         }
     }
 
     @Override
     public void run() {
         authentication();
-        if (this.isAuth){
-            playerQueue.add(this.player);
-        }
     }
     
 }

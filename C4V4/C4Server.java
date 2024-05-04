@@ -53,7 +53,7 @@ public class C4Server {
     gameNumber = 0;
     playerQueue = new ArrayList<>();
     gamesList = new ArrayList<>();
-    logs = readLogsFromFile("C4V4\\C4Logs.txt");
+    logs = readLogsFromFile("C:\\Users\\21sla\\OneDrive - Dickinson College\\Comp352\\ConnectFour\\C4V4\\C4Logs.txt");
   }
 
   /**
@@ -206,22 +206,6 @@ public class C4Server {
     playerQueue = activePlayers;
   }
 
-  private String GetAnswerFromPlayer(Socket player, String question) {
-    String response = null;
-    try {
-      // Get I/O streams
-      BufferedReader reader = new BufferedReader(new InputStreamReader(player.getInputStream()));
-      PrintWriter writer = new PrintWriter(player.getOutputStream(), true);
-
-      writer.println(question);
-      response = reader.readLine();
-
-    } catch (Exception e) {
-      System.out.println("Problem asking quesitons.");
-    }
-    return response;
-  }
-
   public static void main(String[] args) {
     // Dummy "True" variable for readability
     boolean waitingForPlayers = true;
@@ -232,6 +216,7 @@ public class C4Server {
       C4Server gameServer = new C4Server("localhost", 12345);
       System.out.println("*Server started at IP: " + gameServer.ipAddress + " and port: " + gameServer.serverPort
           + ".*");
+      gameServer.serverSocket.setSoTimeout(10000);
 
       // Start a C4CheckGame thread to check/remove games that have ended in real time
       Thread checkGamesThread = new Thread(new C4CheckGame(gameServer.gamesList));
@@ -241,18 +226,23 @@ public class C4Server {
       while (waitingForPlayers) {
         // Accept player
         System.out.println("Waiting for players to connect\n");
-        Socket player = gameServer.serverSocket.accept();
-        System.out.println("A player has joined on socket " + player.getPort() + ".");
-
-        Thread auth = new Thread(new AuthenticationHandler(gameServer.logs, player, gameServer.playerQueue));
-        auth.start();
-
+        try{
+          Socket player = gameServer.serverSocket.accept();
+          System.out.println("A player has joined on socket " + player.getPort() + ".");
+  
+          Thread auth = new Thread(new AuthenticationHandler(gameServer.logs, player, gameServer.playerQueue));
+          auth.start();
+        }
+        catch(Exception e){
+          System.out.println("timeout waiting for player");
+        }
+        
         // Attempt to matchmake
-        System.out.println("Matchmaking...");
+        System.out.println("Matchmaking. Player count: " + gameServer.playerQueue.size());
         gameServer.matchmake();
       }
 
-      gameServer.updateLogsInFile("C4V4\\C4Logs.txt");
+      gameServer.updateLogsInFile("C:\\Users\\21sla\\OneDrive - Dickinson College\\Comp352\\ConnectFour\\C4V4\\C4Logs.txt");
     } catch (Exception e) {
       e.printStackTrace();
     }

@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.io.*;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -45,6 +46,36 @@ public class C4Client {
         }
     }
 
+    /**
+     * Function to authenticate player by either signing in or signing up
+     * @param socket the socket corresponding to the client
+     */
+    private static void authenticate(Socket socket) throws IOException{ 
+        // get I/O streams to server
+        BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        PrintWriter writer = new PrintWriter(socket.getOutputStream(), true);
+
+        while(true){
+            String line = reader.readLine();
+            System.out.println(line);
+            if(line.contains("Enter")){
+                System.out.println("Now taking user's input");
+                String userInput = getInputFromUser();
+                System.out.println("User entered: "+userInput);
+                writer.println(userInput);
+            }
+            if(line.equals("Success")){
+                System.out.println("You have successfully authenticated");
+                writer.println("Moving to pregame");
+                break;
+            }
+        }
+    }
+
+    /**
+     * Function to perform a pre-game check of player activity by processing a ping request from the server
+     * @param socket the socket corresponding to the client
+     */
     private static void PreGame(Socket socket) {
         boolean gameStarted = false;
         String line;
@@ -56,6 +87,7 @@ public class C4Client {
 
             while (!gameStarted) {
                 line = reader.readLine();
+                System.out.println("Line received should be marco but is: "+line);
                 if (line != null){
                     if (line.contains("marco")) {
                         writer.println("polo");
@@ -70,10 +102,17 @@ public class C4Client {
         }
     }
 
+    /**
+     * Function to get input from the user
+     */
     private static String getInputFromUser() {
         return System.console().readLine();
     }
 
+    /**
+     * 
+     * @param socket the socket corresponding to the client
+     */
     private static void playGame(Socket socket) {
         Boolean gameOver = false;
         String line;
@@ -112,6 +151,8 @@ public class C4Client {
             // connect to server and indicate that connection has begun
             Socket socket = new Socket(ServerIP, ServerPortNumber);
             System.out.println("Matchmaking...");
+
+            authenticate(socket);
 
             // while the game has not started, check for a message from the server and
             // respond. This is used to ping that the player is still active.
