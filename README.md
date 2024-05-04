@@ -5,7 +5,7 @@ This file contains instructions on how to download and execute a Connect Four ap
 
 ## Instructions to Download
 
-1. Visit the website at the URL https://github.com/sidlamsal/ConnectFour/tree/main/C4V3. Here, you will see a list of files created for the Connect Four game. Download the following three files:
+1. Visit the website at the URL https://github.com/sidlamsal/ConnectFour/tree/main/C4V3. Here, you will see a list of files created for the Connect Four game. Download the following files:
    - C4Client.java
    - C4Server.java
    - C4Game.java
